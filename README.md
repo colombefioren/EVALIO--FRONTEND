@@ -15,6 +15,10 @@
 
 ---
 
+<p align="center">
+  <img src="docs/screenshots/project-report.png" alt="Evalio project report: score dial, head-judge verdict, Code/Market/Product judge scores and the jury chat" width="900" />
+</p>
+
 ## What you get
 
 | Screen | Highlights |
