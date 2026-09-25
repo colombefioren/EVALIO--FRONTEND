@@ -25,7 +25,10 @@ export function HackathonCard({ hackathon, index }: { hackathon: Hackathon; inde
           aria-hidden
         />
         <div className="absolute left-4 bottom-3 right-4 flex items-end justify-between gap-2">
-          <PhaseBadge phase={hackathon.phase} />
+          <span className="flex flex-wrap gap-1.5">
+            <PhaseBadge phase={hackathon.phase} />
+            {hackathon.is_demo && <span className="chip bg-card">Example</span>}
+          </span>
           <span className="size-9 rounded-full border-2 border-ink bg-card flex items-center justify-center transition-transform duration-200 group-hover:rotate-45">
             <ArrowUpRight size={18} aria-hidden />
           </span>

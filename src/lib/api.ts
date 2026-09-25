@@ -129,6 +129,7 @@ export interface Verdict {
   judge_scores: Partial<Record<JudgeKey, number | null>>;
   criteria: CriterionScore[];
   flags: Flag[];
+  demo?: boolean;
 }
 
 export interface RepoSnapshot {
@@ -204,6 +205,7 @@ export interface Hackathon {
   is_allowed: boolean;
   isAllowed: boolean;
   phase: HackathonPhase;
+  is_demo?: boolean;
   starts_at: string | null;
   deadline: string | null;
   created_at: string | null;
