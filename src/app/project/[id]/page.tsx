@@ -63,6 +63,14 @@ function Report({ project }: { project: Project }) {
     <>
       <Header project={project} />
 
+      {verdict?.demo && (
+        <div className="rounded-xl border-2 border-ink bg-violet/40 px-4 py-3 mb-8 text-sm">
+          <strong>Example evaluation from the Evalio showcase.</strong> Built from this repository&apos;s real measurements,
+          source code and live web research; the scorecard, weighted score and integrity flags are computed by the jury.
+          Re-run the jury to replace it with a fresh evaluation.
+        </div>
+      )}
+
       <AnimatePresence mode="popLayout">
         {evaluating && (
           <motion.div key="tracker" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }} className="mb-8">
@@ -189,9 +197,11 @@ function Header({ project }: { project: Project }) {
           <button className={`btn ${project.is_reviewed ? "" : "btn-primary"}`} disabled={review.isPending} onClick={() => review.mutate()}>
             <CheckCheck size={16} /> {project.is_reviewed ? "Unmark review" : "Mark reviewed"}
           </button>
-          <button className="btn" onClick={() => setConfirmDelete(true)} aria-label="Delete submission">
-            <Trash2 size={16} />
-          </button>
+          {!project.verdict?.demo && (
+            <button className="btn" onClick={() => setConfirmDelete(true)} aria-label="Delete submission">
+              <Trash2 size={16} />
+            </button>
+          )}
         </div>
       </div>
 

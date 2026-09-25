@@ -13,7 +13,7 @@ import { LeaderboardTable, Podium } from "@/components/Leaderboard";
 import { EmptyState, ErrorBanner } from "@/components/EmptyState";
 import { PhaseBadge } from "@/components/status";
 import { Stagger, StaggerItem } from "@/components/motion";
-import { useHackathon, useLeaderboard, useUpdateHackathon } from "@/lib/hooks/useHackathons";
+import { useHackathon, useHackathons, useLeaderboard, useUpdateHackathon } from "@/lib/hooks/useHackathons";
 import { isEvaluating, splitList, type Criterion, type Hackathon, type Project } from "@/lib/api";
 import { JUDGE_COLORS } from "@/lib/constants";
 import { formatDate, formatScore, timeUntil } from "@/lib/utils";
@@ -79,28 +79,32 @@ export default function HackathonPage() {
               <button className="btn btn-primary" onClick={() => setAddOpen(true)} disabled={!canSubmit}>
                 <Plus size={16} /> Submit project
               </button>
-              <button
-                className="btn"
-                disabled={update.isPending}
-                onClick={() =>
-                  update.mutate(
-                    { isAllowed: !hackathon.isAllowed },
-                    {
-                      onSuccess: () => toast.success(hackathon.isAllowed ? "Submissions closed" : "Submissions opened"),
-                      onError: (e) => toast.error((e as Error).message),
-                    },
-                  )
-                }
-              >
-                {hackathon.isAllowed ? <Lock size={16} /> : <LockOpen size={16} />}
-                {hackathon.isAllowed ? "Close submissions" : "Open submissions"}
-              </button>
+              {!hackathon.is_demo && (
+                <button
+                  className="btn"
+                  disabled={update.isPending}
+                  onClick={() =>
+                    update.mutate(
+                      { isAllowed: !hackathon.isAllowed },
+                      {
+                        onSuccess: () => toast.success(hackathon.isAllowed ? "Submissions closed" : "Submissions opened"),
+                        onError: (e) => toast.error((e as Error).message),
+                      },
+                    )
+                  }
+                >
+                  {hackathon.isAllowed ? <Lock size={16} /> : <LockOpen size={16} />}
+                  {hackathon.isAllowed ? "Close submissions" : "Open submissions"}
+                </button>
+              )}
               <HeaderStats stats={hackathon.stats} />
             </div>
           </div>
           <CriteriaWeights criteria={hackathon.criteria_config} />
         </motion.section>
       )}
+
+      {hackathon?.is_demo && !hackathon.isAllowed && <ShowcaseBanner />}
 
       <AnimatePresence>
         {evaluating > 0 && (
@@ -169,6 +173,24 @@ function Shell({ children }: { children: React.ReactNode }) {
     <div className="min-h-dvh">
       <Topbar />
       <main id="main" className="px-4 sm:px-6 py-8 max-w-7xl mx-auto">{children}</main>
+    </div>
+  );
+}
+
+function ShowcaseBanner() {
+  const { data: hackathons = [] } = useHackathons();
+  const sandbox = hackathons.find((h) => h.is_demo && h.isAllowed);
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between rounded-xl border-2 border-ink bg-violet/40 px-4 py-3 mb-6 text-sm">
+      <p>
+        <strong>This is the Evalio showcase.</strong> Real public repositories, cloned, measured and judged to show how the
+        jury works. Open any project to read its full report.
+      </p>
+      {sandbox && (
+        <Link href={`/hackathon/${sandbox.id}`} className="btn btn-sm btn-primary shrink-0">
+          Try it in the Open Sandbox
+        </Link>
+      )}
     </div>
   );
 }
